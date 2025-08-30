@@ -61,7 +61,40 @@ U-ITAM เป็นระบบจัดการทรัพย์สิน IT 
 - 10GB พื้นที่ดิสก์ว่าง
 - Port 3000, 5432, และ 8000 ที่ว่าง
 
-## การติดตั้งและใช้งาน
+## Quick Start
+
+### 1. Prerequisites
+- Docker and Docker Compose installed
+- At least 2GB RAM available
+- 10GB free disk space
+- Ports 3000, 5432, and 8000 available
+
+### 2. Installation
+```bash
+git clone <repository-url>
+cd ITAM_PROJECT
+chmod +x setup.sh
+./setup.sh
+```
+
+The setup script will:
+- Create necessary environment files
+- Build and start all Docker containers
+- Run database migrations
+- Create the default admin user
+
+### 3. Access the System
+- **Web Application**: http://localhost:3000
+- **API Documentation**: http://localhost:8000/docs
+- **Default Credentials**: admin@example.com / admin123
+
+## Manual Setup (Alternative)
+
+If you prefer to set up manually or the automated script doesn't work:
+
+### Manual Setup (Alternative)
+
+If you prefer to set up manually or the automated script doesn't work:
 
 ### 1. Clone Repository
 ```bash
@@ -69,22 +102,66 @@ git clone <repository-url>
 cd ITAM_PROJECT
 ```
 
-### 2. รัน Docker Compose
+### 2. Start Services
 ```bash
-# รัน services ทั้งหมด
+# Start all services
 docker-compose up -d
 
-# ดู logs
-docker-compose logs -f
+# Run database migrations
+docker-compose exec api alembic upgrade head
 
-# หยุด services
-docker-compose down
+# Create admin user
+docker-compose exec api python -c "from app.db.init_db import main; main()"
 ```
 
-### 3. เข้าถึงระบบ
+### 3. Access the System
+### 3. Access the System
 - **Web Application**: http://localhost:3000
-- **API Documentation**: http://localhost:8000/docs
+- **API Documentation**: http://localhost:8000/docs  
 - **Database**: localhost:5432
+
+### 4. Default Admin Account
+- **Email**: admin@example.com
+- **Password**: admin123
+
+⚠️ **Important**: Change the default password after first login!
+
+## System Management
+
+### View Logs
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f api
+docker-compose logs -f web
+docker-compose logs -f discovery
+```
+
+### Stop/Start System
+```bash
+# Stop all services
+docker-compose down
+
+# Start services
+docker-compose up -d
+
+# Restart services
+docker-compose restart
+```
+
+### Database Operations
+```bash
+# Run migrations
+docker-compose exec api alembic upgrade head
+
+# Create migration
+docker-compose exec api alembic revision --autogenerate -m "Description"
+
+# Access database directly
+docker-compose exec db psql -U uitam_user -d uitam_db
+```
 
 ## การตั้งค่า
 
