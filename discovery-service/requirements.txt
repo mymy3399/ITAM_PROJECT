@@ -1,0 +1,15 @@
+# HTTP requests สำหรับเรียก API
+requests
+aiohttp
+# Network scanning
+python-nmap
+# WMI queries สำหรับ Windows (optional, ใช้ได้กับ Linux ผ่าน network)
+pywinrm
+# SSH connections
+paramiko
+# SNMP queries
+pysnmp
+# Configuration management
+pydantic-settings
+# JSON handling
+ujson
