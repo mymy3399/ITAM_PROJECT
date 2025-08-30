@@ -1,0 +1,22 @@
+# FastAPI framework
+fastapi
+# ASGI server for FastAPI
+uvicorn[standard]
+# Database ORM
+sqlalchemy
+# PostgreSQL driver
+psycopg2-binary
+# Pydantic for data validation (มาพร้อม FastAPI แต่ระบุไว้เพื่อความชัดเจน)
+pydantic
+# Environment variable management
+pydantic-settings
+# Database migration tool
+alembic
+# Password hashing
+passlib[bcrypt]
+# JWT token handling
+python-jose[cryptography]
+# OAuth2 form handling
+python-multipart
+# Email validation
+email-validator

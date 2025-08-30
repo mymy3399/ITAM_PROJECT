@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Service สำหรับรัน PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: uitam_db
+    # ตั้งค่า Environment Variables สำหรับ Database
+    environment:
+      - POSTGRES_USER=uitam_user
+      - POSTGRES_PASSWORD=uitam_password
+      - POSTGRES_DB=uitam_db
+    # Mount volume เพื่อเก็บข้อมูล Database อย่างถาวร
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    # Map port 5432 ของ container ไปยัง port 5432 ของเครื่อง host
+    ports:
+      - "5432:5432"
+    # ตั้งค่า healthcheck เพื่อให้แน่ใจว่า DB พร้อมใช้งานก่อนที่ API จะเริ่มทำงาน
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uitam_user -d uitam_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Service สำหรับรัน Backend API (FastAPI)
+  api:
+    # Build Docker image จาก Dockerfile ในโฟลเดอร์ backend
+    build: ./backend
+    container_name: uitam_api
+    # คำสั่งสำหรับรัน FastAPI server ด้วย uvicorn
+    # --reload ช่วยให้ server restart อัตโนมัติเมื่อมีการแก้โค้ด
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Mount volume เพื่อให้โค้ดใน container อัปเดตตามโค้ดในเครื่อง host
+    volumes:
+      - ./backend:/app
+    # Map port 8000 ของ container ไปยัง port 8000 ของเครื่อง host
+    ports:
+      - "8000:8000"
+    # ตั้งค่า Environment Variables สำหรับ API
+    environment:
+      - DATABASE_URL=postgresql://uitam_user:uitam_password@db/uitam_db
+    # กำหนดให้ service นี้เริ่มทำงานหลังจาก service 'db' พร้อมใช้งานแล้ว
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  # สร้าง volume ชื่อ postgres_data
+  postgres_data:
